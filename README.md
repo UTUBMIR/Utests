@@ -1,3 +1,4 @@
+<h1>Simple example</h1>
 ```cs
 namespace Example {
     internal class Program {
