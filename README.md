@@ -1,5 +1,5 @@
 ```cs
-namespace Example_ {
+namespace Example {
     internal class Program {
         static object test1() {
             Console.WriteLine("2 * 6");
