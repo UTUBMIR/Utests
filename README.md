@@ -1,6 +1,4 @@
-'''c#
-
-
+```cs
 namespace Learning_c_ {
     internal class Program {
         static object test1() {
@@ -18,4 +16,4 @@ namespace Learning_c_ {
     }
 }
 
-'''
+```
