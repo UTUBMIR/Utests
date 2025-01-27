@@ -20,3 +20,7 @@ namespace Example {
 
 after starting this code you will see this:
 ![image](https://github.com/user-attachments/assets/9a168c45-50d2-477f-ba3d-2d6508aec634)
+
+- [x] Support any return type in test functions
+- [ ] Support any parameters it test function
+- [ ] Print formatting
