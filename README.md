@@ -1,5 +1,5 @@
 ```cs
-namespace Learning_c_ {
+namespace Example_ {
     internal class Program {
         static object test1() {
             Console.WriteLine("2 * 6");
