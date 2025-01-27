@@ -1,5 +1,5 @@
 <h1>Simple example</h1>
-cs
+```cs
 namespace Example {
     internal class Program {
         static object test1() {
@@ -16,7 +16,7 @@ namespace Example {
         }
     }
 }
-
+```
 
 after starting this code you will see this:
 ![image](https://github.com/user-attachments/assets/9a168c45-50d2-477f-ba3d-2d6508aec634)
