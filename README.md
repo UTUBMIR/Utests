@@ -1,4 +1,4 @@
-#Simple example#
+# Simple example
 ```cs
 namespace Example {
     internal class Program {
