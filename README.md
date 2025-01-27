@@ -1,4 +1,4 @@
-<h1>Simple example</h1>
+#Simple example#
 ```cs
 namespace Example {
     internal class Program {
