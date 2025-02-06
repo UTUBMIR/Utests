@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Learning_c_ {
+﻿namespace Learning_c_ {
     internal class UTests {
         internal List<Func<object>>? tests;
 
@@ -12,30 +6,40 @@ namespace Learning_c_ {
             tests = new List<Func<object>>();
         }
 
-        internal object[]? UnitTest() {
-            if (tests == null) {
-                return null;
+        internal static string absoluteToString(object abs) {
+            if (abs is Array array) {
+                return "[" + string.Join(", ", array.Cast<object>()) + "]";
             }
-            object[] result = new object[tests.Count];
+            return abs.ToString()??"NONE";
+        }
 
+        internal static bool absoluteEquals(object absA, object absB) {
+            if (absA is Array arrA && absB is Array arrB) {
+                return arrA.Cast<object>().SequenceEqual(arrB.Cast<object>());
+            }
+            return Equals(absA, absB);
+        }
+
+        internal object[]? UnitTest() {
+            if (tests == null) return null;
+
+            object[] result = new object[tests.Count];
             for (int i = 0; i < tests.Count; ++i) {
                 result[i] = tests[i]();
             }
-
             return result;
         }
 
         internal object[]? UnitTestPrint() {
-            if (tests == null) {
-                return null;
-            }
+            if (tests == null) return null;
+
             object[] result = new object[tests.Count];
 
             Console.WriteLine("Starting UnitTests...\n");
             for (int i = 0; i < tests.Count; ++i) {
                 Console.WriteLine($"{tests[i].Method.Name} {{");
                 result[i] = tests[i]();
-                Console.WriteLine($"}} returned: {result[i]}\n");
+                Console.WriteLine($"}} returned: {absoluteToString(result[i])}\n");
             }
             Console.WriteLine("UnitTests finished\n");
 
@@ -43,70 +47,60 @@ namespace Learning_c_ {
         }
 
         internal bool? UnitTest(object[] right) {
-            return UnitTest() == right;
+            object[]? tested = UnitTest();
+            if (tested == null) return null;
+
+            return tested.SequenceEqual(right);
         }
 
         internal bool[]? Passed(object[] right) {
             object[]? tested = UnitTest();
-            if (tested == null || right.Length != tested?.Length) {
+            if (tested == null || tested.Length != right.Length) {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\aError: Wrong length of \"right\" parameters!");
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\aError: Wrong length of \"right\" parameters!");
+                Console.ResetColor();
                 return null;
             }
 
-            bool[] passed = new bool[tests.Count];
-
-            for (int i = 0; i < tested.Length; ++i) {
-                passed[i] = tested[i] == right[i];
-            }
-
-            return passed;
+            return tested.Zip(right, absoluteEquals).ToArray();
         }
 
         internal bool[]? PassedPrint(object[] right) {
-            object[] tested = new object[tests.Count];
-
-            if (tests == null || right.Length != tested.Length) {
+            if (tests == null || right.Length != tests.Count) {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\aError: Wrong length of \"right\" parameters!");
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\aError: Wrong length of \"right\" parameters!");
+                Console.ResetColor();
                 return null;
             }
+
             bool[] passed = new bool[tests.Count];
             int passedCounter = 0;
 
             Console.WriteLine("Starting UnitTests...\n");
             for (int i = 0; i < tests.Count; ++i) {
                 Console.WriteLine($"{tests[i].Method.Name} {{");
-                tested[i] = tests[i]();
-                passed[i] = tested[i].Equals(right[i]);
-                Console.Write($"}} returned: \"{tested[i]}\" of type: {tested[i].GetType()}, ");
+                object tested = tests[i]();
+                passed[i] = absoluteEquals(tested, right[i]);
 
+                Console.Write($"}} returned: \"{absoluteToString(tested)}\" of type: {tested.GetType()}, ");
                 Console.ForegroundColor = passed[i] ? ConsoleColor.Green : ConsoleColor.Red;
-                Console.Write($"{ (passed[i] ? "PASSED" : "FAILED")}");
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(passed[i] ? "PASSED" : "FAILED");
+                Console.ResetColor();
 
-                Console.WriteLine($", pass value: \"{right[i]}\" of type: {right[i].GetType()}.\n");
+                Console.WriteLine($", pass value: \"{absoluteToString(right[i])}\" of type: {right[i].GetType()}.\n");
 
-                passedCounter += passed[i] ? 1 : 0;
+                if (passed[i]) ++passedCounter;
             }
+
             Console.WriteLine($"UnitTests finished.");
 
-            if (tests.Count != 0) {
-                double percent = (passed.Length != 0 ? ((double)passedCounter / passed.Length) : 0);
-                Console.Write($"\bwith: {passedCounter} passed and {passed.Length - passedCounter} failed. {(percent * 100):N2}%. Most is ");
-                
-                Console.ForegroundColor = percent > 0.5 ? ConsoleColor.Green : ConsoleColor.Red;
+            if (tests.Count > 0) {
+                double percent = (passed.Length != 0) ? ((double)passedCounter / passed.Length) * 100 : 0;
+                Console.Write($"With: {passedCounter} passed and {passed.Length - passedCounter} failed. {percent:N2}%. Most is ");
 
-                if (percent > 0.5) {
-                    Console.WriteLine("PASSED.\n");
-                }
-                else {
-                    Console.WriteLine("FAILED.\n");
-                }
-
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = percent > 50 ? ConsoleColor.Green : ConsoleColor.Red;
+                Console.WriteLine(percent > 50 ? "PASSED.\n" : "FAILED.\n");
+                Console.ResetColor();
             }
 
             return passed;
